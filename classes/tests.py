@@ -18,7 +18,7 @@ class ModelTestCase(TestCase):
             teacher= self.user,
             subject="Science",
             grade=5,
-            year="2018",
+            year=2018,
             )
         student = Student.objects.create(
             name="Laila",
@@ -140,7 +140,7 @@ class CreateClassroomTestCase(TestCase):
         data = {
             "subject":"Science",
             "grade":5,
-            "year":"2018"
+            "year":2018
         }
         url = reverse("classroom-create")
         response = self.client.post(url, data)
@@ -183,7 +183,7 @@ class ClassroomDetailTestCase(TestCase):
             teacher= cls.user,
             subject="Science",
             grade=5,
-            year="2018",
+            year=2018,
             )
         cls.students = []
         for i in range(0,5):
@@ -254,7 +254,7 @@ class StudentCreateTestCase(TestCase):
             teacher= cls.user,
             subject="Science",
             grade=5,
-            year="2018",
+            year=2018,
             )
 
     def test_create(self):
@@ -289,7 +289,7 @@ class StudentUpdateTestCase(TestCase):
             teacher= cls.user,
             subject="Science",
             grade=5,
-            year="2018",
+            year=2018,
             )
         cls.students = []
         for i in range(0,5):
@@ -317,7 +317,7 @@ class StudentUpdateTestCase(TestCase):
         data = {
             "name":"Laila",
             "dob":"1995-01-02",
-            "exam_grade":10,
+            "exam_grade":100,
             "gender":"F"
         }
         response = self.client.post(url, data)
@@ -340,7 +340,7 @@ class StudentDeleteTestCase(TestCase):
             teacher= cls.user,
             subject="Science",
             grade=5,
-            year="2018",
+            year=2018,
             )
         cls.students = []
         for i in range(0,5):
