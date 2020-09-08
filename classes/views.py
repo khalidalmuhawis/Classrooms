@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
-from .models import Classroom
-from .forms import ClassroomForm, SigninForm, SignupForm
+from .models import Classroom, Student
+from .forms import ClassroomForm, SigninForm, SignupForm, StudentForm
 
 
 def signup(request):
@@ -16,7 +16,7 @@ def signup(request):
             user.save()
 
             login(request, user)
-            return redirect("restaurant-list")
+            return redirect("classroom-list")
     context = {
         "form": form,
     }
@@ -35,7 +35,7 @@ def signin(request):
             auth_user = authenticate(username=username, password=password)
             if auth_user is not None:
                 login(request, auth_user)
-                return redirect('restaurant-list')
+                return redirect('classroom-list')
     context = {
         "form": form
     }
@@ -57,8 +57,10 @@ def classroom_list(request):
 
 def classroom_detail(request, classroom_id):
     classroom = Classroom.objects.get(id=classroom_id)
+    students = Student.objects.filter(classroom=classroom)
     context = {
         "classroom": classroom,
+        "students": students,
     }
     return render(request, 'classroom_detail.html', context)
 
@@ -101,5 +103,49 @@ def classroom_update(request, classroom_id):
 
 def classroom_delete(request, classroom_id):
     Classroom.objects.get(id=classroom_id).delete()
+    messages.success(request, "Successfully Deleted!")
+    return redirect('classroom-list')
+
+
+def student_create(request, classroom_id):
+    form = StudentForm
+    classroom = Classroom.objects.get(id=classroom_id)
+    # if not(request.user.is_staff or request.user == restaurant.owner):
+    #     return redirect("no-access")
+    if request.method == "POST":
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.classroom = classroom
+            item.save()
+            return redirect(classroom)
+    context = {
+        "form": form,
+        "classroom": classroom,
+    }
+    return render(request, 'create_student.html', context)
+
+
+def student_update(request, classroom_id, student_id):
+    student = Student.objects.get(id=student_id)
+    form = StudentForm(instance=student)
+    classroom = Classroom.objects.get(id=classroom_id)
+    if request.method == "POST":
+        form = ClassroomForm(request.POST, request.FILES or None, instance=student)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Successfully Edited!")
+            return redirect("classroom-list")
+        print(form.errors)
+    context = {
+        "form": form,
+        "student": student,
+        "classroom": classroom,
+    }
+    return render(request, 'student_update.html', context)
+
+
+def student_delete(request, classroom_id, student_id):
+    Student.objects.get(id=student_id).delete()
     messages.success(request, "Successfully Deleted!")
     return redirect('classroom-list')
